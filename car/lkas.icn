@@ -1,0 +1,83 @@
+link hexcvt
+procedure main()
+   f := open("lkasldw.csv") | stop("can't open lkas.txt: ", &errortext )
+   i:=0
+   g := gb :=0
+   p := pb :=  0
+   n := nb := 0
+
+   every l := !f do {
+      sum := 0
+      l2
+       l ? {
+	   tab(upto(',') + 1)
+	   addr := tab(upto(','))
+	   if not integer(addr) then next
+          if addr ~= 579 then next
+          move(1)    
+	  tab(upto(',') +  1)
+         i +:= 1
+
+         ctr := hex(move(1))
+         lkas1 := hex(lkas1str:=move(1))
+         lkas2 := hex(lkas2str:=move(2))
+          b3 := hex(move(2))
+          b4 := hex(move(2))
+          b5 := hex(move(2))
+          b6 := hex(move(2))
+          b7 := hex(move(2))
+
+         c := hex(move(2))
+          }
+      
+
+
+      
+      lkas := lkas1str || lkas2str
+      
+      sum := 241 - ctr - (lkas1-8) - lkas2 - b3  - b4 - b5 - b6 - b7
+
+      if sum < 0 then sum := sum + 256
+                                 
+      csum := sum % 256
+
+      
+
+      #if 0> csum > -15  && lkas2>0 then csum +:= 256
+
+       
+       if lkas2 == 0 && lkas1 == 8  then {
+	   if (csum-c ~= 0)  | (b3 = 1) then{
+	       write ("+  ", i, ":", left(csum, 4), left(c, 4), left(csum - c, 6), left(l, 45),
+		      left(lkas1, 4), left(lkas2, 4), "  ", left(lkas, 4)
+		      , " = ", left(hex(lkas)-2048), 5)
+             gb +:= 1
+             }
+          else
+             g +:= 1
+          }
+       else if lkas2 > 0 then{
+          if csum-c ~= 0 then {
+             write ("+  ", i, ":", left(csum, 4), left(c, 4), left(csum - c, 6), left(l, 45),
+                    left(lkas1, 4), left(lkas2, 4), "  ", left(lkas, 4)
+                    , " = ", left(hex(lkas)-2048), 5)
+             pb +:= 1
+             }
+          else
+             p +:= 1
+          }
+       else
+          if csum-c ~= 0 then{
+             #write ("-  ", i, ":",  csum - c, "    ", l)
+             nb +:= 1
+             }
+          else
+             n +:=  1
+      }
+
+   write("good:", g, "     ", gb)
+   write("lkas2+:", p, "     ", pb)
+   write("lkas2-:", n, "     ", nb)
+
+      
+end
