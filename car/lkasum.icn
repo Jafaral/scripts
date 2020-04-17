@@ -1,0 +1,121 @@
+link hexcvt
+procedure main(args)
+   fname := ( args[1] | "cx9.csv") 
+   f := open(fname) | stop("can't open ", fname," : ", &errortext )
+   i:=0
+   g := gb :=0
+   p := pb :=  0
+   n := nb := 0
+
+   every l := !f do {
+      sum := 0
+      l2
+       l ? {
+	   tab(upto(',') + 1)
+	   addr := tab(upto(','))
+	   if not integer(addr) then next
+          if addr ~= 579 then next
+
+          move(1)    
+	  bus := tab(upto(',') )
+          move(1)
+         i +:= 1
+
+         ctr := hex(move(1))
+         lkas1 := hex(lkas1str:=move(1))
+         lkas2 := hex(lkas2str:=move(2))
+          b3 := hex(move(2))
+          b4 := hex(move(2))
+          b5 := hex(move(2))
+          b6 := hex(move(2))
+          b7 := hex(move(2))
+
+         c := hex(move(2))
+          }
+      
+
+      if bus > 2 then next
+      #if iand(b3, hex("80")) ~= 0 then
+      #   write(b3)
+
+      #b4 := iand(b4, hex("20")) + ishift(iand(b4, hex("40")), -2) 
+
+      #b5 := ishift(b5, 2)
+      #b5 +:= ishift(b6, -6)      
+
+     if iand(b5, hex("01")) = 1 then
+      b5 = b5 + 15
+
+      #b77 := ishift(iand(b7, hex("C0")), -6)
+
+      #b6 := ior(ishift(iand(b6, hex("3F")), 2), b77)
+
+      b77 := ishift(iand(b7, hex("C0")), -6)
+      
+      #b6 := ishift(iand(b6, hex("3F")), 2) 
+
+      b6 := ishift(iand(b6, hex("0F")), 4) + ishift(iand(b6, hex("F0")), -4) 
+
+      b7 :=   ishift(iand(b7, hex("F0")), -4)
+
+
+
+#if b77 ~=0 | b5 ~=8 then next
+
+
+      
+      lkas := lkas1str || lkas2str
+      
+      sum := 249 - ctr - lkas1 - lkas2 - b3  - b4 - b5 - b6  - b7 
+
+      if sum < 0 then {
+         if sum < -256 then 
+            sum := sum + 512
+         else
+            sum := sum + 256
+         }                        
+      csum := sum % 256
+
+      
+
+      #if 0> csum > -15  && lkas2>0 then csum +:= 256
+
+       
+       if lkas2 == 0 && lkas1 == 8  then {
+	   if (csum-c ~= 0)  then{
+              writes(b5, "  ",  left(b6, 5),  left(b77, 5), "   ")
+
+	       write ("+  ", i, ":", left(csum, 4), left(c, 4), left(csum - c, 6), left(l, 45),
+		      left(lkas1, 4), left(lkas2, 4), "  ", left(bus, 4))
+             gb +:= 1
+             }
+          else
+             g +:= 1
+          }
+       else if lkas2 > 0 then{
+          if csum-c ~= 0 then {
+             writes(b5, "  ",  left(b6, 5),  left(b77, 5), "   ")
+
+             write ("+  ", i, ":", left(csum, 4), left(c, 4), left(csum - c, 6), left(l, 45),
+                    left(lkas1, 4), left(lkas2, 4), "  ", left(bus, 4))
+             pb +:= 1
+             }
+          else
+             p +:= 1
+          }
+       else
+          if csum-c ~= 0 then{
+             #write ("-  ", i, ":",  csum - c, "    ", l)
+             nb +:= 1
+             }
+          else
+             n +:=  1
+      }
+
+   write("         good      bad")
+   write("no-lkas: ", g, "     ", gb)
+   write("lkas2 +: ", p, "     ", pb)
+   write("lkas2 -: ", n, "     ", nb)
+
+      
+end
