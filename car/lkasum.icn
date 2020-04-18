@@ -1,6 +1,6 @@
 link hexcvt
 procedure main(args)
-   fname := ( args[1] | "cx9.csv") 
+   fname := ( args[1] | "data/cx9.csv")
    f := open(fname) | stop("can't open ", fname," : ", &errortext )
    i:=0
    g := gb :=0
@@ -40,20 +40,15 @@ procedure main(args)
 
       b4 := iand(b4, hex("20")) + ishift(iand(b4, hex("40")), -2) 
 
-      b5 := ishift(b5, 2)
-      b5 +:= ishift(b6, -6)
-      #b5 +:= ishift(iand(b6, hex("FF")), 2) 
-    
+      b5 := ishift(b5, 0)
 
-      b77 := ishift(iand(b7, hex("C0")), -6)
+      if b5 = 1 then
+         b5 -:= 15
 
-      b6 := ishift(iand(b6, hex("3F")), 2)
+      b6 := ishift(iand(b6, hex("0F")), 4) +  ishift(b6, -4)
 
-      
-      #b6 := iand(b6, hex("03")) + b77
-      
-
-      b7 :=   ishift(iand(b7, hex("30")), -6) + ishift(iand(b7, hex("10")), -5)
+      b7 :=   ishift(b7, -4)
+      #b7 :=   ishift(iand(b7, hex("30")), -6) + ishift(iand(b7, hex("10")), -5)
 
 
 
@@ -63,17 +58,16 @@ procedure main(args)
       
       lkas := lkas1str || lkas2str
       
-      sum := 255 - ctr - lkas1 - lkas2 - b3  - b4 - b5 - b6  - b7
+      sum := 249 - ctr - lkas1 - lkas2 - b3  - b4 - b5 - b6  - b7
 
       if sum < 0 then {
-         #if sum < -256 then 
-         #   sum := sum + 512
-         #else
+         if sum < -256 then
+            sum := sum + 512
+         else
             sum := sum + 256
          }                        
       csum := sum % 256
 
-      
 
       #if 0> csum > -15  && lkas2>0 then csum +:= 256
 
