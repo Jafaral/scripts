@@ -38,25 +38,22 @@ procedure main(args)
       #if iand(b3, hex("80")) ~= 0 then
       #   write(b3)
 
-      #b4 := iand(b4, hex("20")) + ishift(iand(b4, hex("40")), -2) 
+      b4 := iand(b4, hex("20")) + ishift(iand(b4, hex("40")), -2) 
 
-      #b5 := ishift(b5, 2)
-      #b5 +:= ishift(b6, -6)      
-
-     if iand(b5, hex("01")) = 1 then
-      b5 = b5 + 15
-
-      #b77 := ishift(iand(b7, hex("C0")), -6)
-
-      #b6 := ior(ishift(iand(b6, hex("3F")), 2), b77)
+      b5 := ishift(b5, 2)
+      b5 +:= ishift(b6, -6)
+      #b5 +:= ishift(iand(b6, hex("FF")), 2) 
+    
 
       b77 := ishift(iand(b7, hex("C0")), -6)
+
+      b6 := ishift(iand(b6, hex("3F")), 2)
+
       
-      #b6 := ishift(iand(b6, hex("3F")), 2) 
+      #b6 := iand(b6, hex("03")) + b77
+      
 
-      b6 := ishift(iand(b6, hex("0F")), 4) + ishift(iand(b6, hex("F0")), -4) 
-
-      b7 :=   ishift(iand(b7, hex("F0")), -4)
+      b7 :=   ishift(iand(b7, hex("30")), -6) + ishift(iand(b7, hex("10")), -5)
 
 
 
@@ -66,12 +63,12 @@ procedure main(args)
       
       lkas := lkas1str || lkas2str
       
-      sum := 249 - ctr - lkas1 - lkas2 - b3  - b4 - b5 - b6  - b7 
+      sum := 255 - ctr - lkas1 - lkas2 - b3  - b4 - b5 - b6  - b7
 
       if sum < 0 then {
-         if sum < -256 then 
-            sum := sum + 512
-         else
+         #if sum < -256 then 
+         #   sum := sum + 512
+         #else
             sum := sum + 256
          }                        
       csum := sum % 256
@@ -83,7 +80,7 @@ procedure main(args)
        
        if lkas2 == 0 && lkas1 == 8  then {
 	   if (csum-c ~= 0)  then{
-              writes(b5, "  ",  left(b6, 5),  left(b77, 5), "   ")
+              writes(b5, "  ",  left(b6, 5),  left(b7, 5), "   ")
 
 	       write ("+  ", i, ":", left(csum, 4), left(c, 4), left(csum - c, 6), left(l, 45),
 		      left(lkas1, 4), left(lkas2, 4), "  ", left(bus, 4))
@@ -94,7 +91,7 @@ procedure main(args)
           }
        else if lkas2 > 0 then{
           if csum-c ~= 0 then {
-             writes(b5, "  ",  left(b6, 5),  left(b77, 5), "   ")
+             writes(b5, "  ",  left(b6, 5),  left(b7, 5), "   ")
 
              write ("+  ", i, ":", left(csum, 4), left(c, 4), left(csum - c, 6), left(l, 45),
                     left(lkas1, 4), left(lkas2, 4), "  ", left(bus, 4))
@@ -112,10 +109,11 @@ procedure main(args)
              n +:=  1
       }
 
+   write("\n=====================================")
    write("         good      bad")
-   write("no-lkas: ", g, "     ", gb)
-   write("lkas2 +: ", p, "     ", pb)
-   write("lkas2 -: ", n, "     ", nb)
+   write("no-lkas: ", right(g, 4), right(gb, 8))
+   write("lkas2 +: ", right(p, 4), right(pb, 8))
+   write("lkas2 -: ", right(n, 4), right(nb, 8))
 
       
 end
